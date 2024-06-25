@@ -1,0 +1,9 @@
+
+  - name: MainPlaybook
+    hosts: all
+    gather_facts: yes
+    become: yes
+    roles:
+            - DockerBenchSecurity
+            - kube-bench
+            - linPEAS_grype

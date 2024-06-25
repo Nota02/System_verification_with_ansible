@@ -1,0 +1,10 @@
+---
+# defaults file for grype
+repdir: /tmp/Results
+grype_app: grype
+grype_desired_state: present
+grype_version: 0.38.0
+grype_os: linux
+grype_arch: amd64
+
+grype_debian_url: "https://github.com/anchore/{{ grype_app }}/releases/download/v{{ grype_version }}/{{ grype_app }}_{{ grype_version }}_{{ grype_os }}_{{ grype_arch }}.deb"

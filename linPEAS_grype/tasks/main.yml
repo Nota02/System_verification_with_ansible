@@ -1,0 +1,54 @@
+---
+# tasks file for grype
+- name: Downloading and installing grype
+  apt:
+    deb: "https://github.com/anchore/grype/releases/download/v0.38.0/grype_0.38.0_linux_amd64.deb"
+    state: present
+- name: Make grype directory
+  file:
+    path: /usr/local/grype
+    state: directory
+- name: Make linPeas directory
+  file:
+    path: /usr/local/linPeas
+    state: directory
+- name: Copy Scripts
+  copy:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+    remote_src: "{{ item.remote }}"
+    mode: '0700'
+  with_items:
+    - { src: 'grype.sh', dest: '/usr/local/grype/grype.sh', remote: 'no' } 
+    - { src: 'linpeas.sh', dest: '/usr/local/linPeas/linpeas.sh', remote: 'no' }
+    - { src: 'linpeasstart.sh', dest: '/usr/local/linPeas/linpeasstart.sh', remote: 'no' } 
+- name: Run the grype Script
+  command:
+    cmd: "/usr/local/grype/grype.sh"
+    chdir: "/usr/local/grype"     
+- name: Run the linpeas Script
+  command:
+    cmd: "/usr/local/linPeas/linpeasstart.sh"
+    chdir: "/usr/local/linPeas"
+- name: Fetch the linepeas log file 
+  fetch:
+    src: "/usr/local/linPeas/audit.out"
+    dest: "{{ repdir }}"
+- name: Fetch the grype log file 
+  fetch:
+    src: "/usr/local/grype/grype.json"
+    dest: "{{ repdir }}" 
+- name: Remove grype package
+  apt:
+    name: grype
+    state: absent
+- name: Deleting directory grype
+  shell: rm -R grype
+  args:
+    chdir: "/usr/local/"
+    warn: no
+- name: Deleting directory linPeas
+  shell: rm -R linPeas
+  args:
+    chdir: "/usr/local/"
+    warn: no 

@@ -1,0 +1,31 @@
+---
+# tasks file for kube-bench
+  - name: Make kube-bench directory
+    file:
+      path: /usr/local/kube-bench
+      state: directory
+  - name: Copy Install Script
+    copy:
+      src: "{{ item.src }}"
+      dest: "{{ item.dest }}"
+      remote_src: "{{ item.remote }}"
+      mode: '0700'
+    with_items:
+      - { src: 'kb_setup.sh', dest: '/usr/local/kube-bench/kb_setup.sh', remote: 'no' }
+  - name: Run the kb_setup Script
+    command:
+      cmd: "/usr/local/kube-bench/kb_setup.sh"
+      chdir: "/usr/local/kube-bench"
+  - name: Fetch the log file 
+    fetch:
+      src: "/usr/local/kube-bench/kubs.log"
+      dest: "{{ repdir }}"
+  - name: Remove kube-bench package
+    apt:
+      name: kube-bench
+      state: absent
+  - name: Deleting directory kube-bench
+    shell: rm -R kube-bench
+    args:
+     chdir: "/usr/local/"
+     warn: no

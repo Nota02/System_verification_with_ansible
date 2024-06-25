@@ -1,0 +1,23 @@
+---
+  - name: Install packages
+    apt:
+      name: "git"
+      state: present
+      update-cache: yes
+  - name: Clone the directory DockerBenchSecurity
+    git:
+      repo: 'https://github.com/docker/docker-bench-security.git'
+      dest: /usr/local/docker-bench-security
+  - name: Run the docker-bench-security script
+    command: 
+      cmd: "/usr/local/docker-bench-security/docker-bench-security.sh"
+      chdir: "/usr/local/docker-bench-security"
+  - name: Fetch the log file 
+    fetch:
+      src: "/usr/local/docker-bench-security/log/docker-bench-security.log"
+      dest: "{{ repdir }}"
+  - name: Deleting docker-bench-security
+    shell: rm -R docker-bench-security
+    args:
+     chdir: "/usr/local/"
+     warn: no
